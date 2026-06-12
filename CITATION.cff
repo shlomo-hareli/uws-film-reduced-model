@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it."
+
+title: "Reduced Model for Urea–Water Solution Film Decomposition in SCR Systems (Software)"
+
+authors:
+  - family-names: Hareli
+    given-names: Shlomo
+    affiliation: Karlsruhe Institute of Technology (KIT)
+    email: shlomo.hareli@kit.edu
+   
+  - family-names: Bykov
+    given-names: Viatcheslav
+    affiliation: Karlsruhe Institute of Technology (KIT)
+    
+
+  - family-names: Maas
+    given-names: Ulrich
+    affiliation: Karlsruhe Institute of Technology (KIT)
+    
+
+date-released: 2026-06-12
+version: 1.0.0
+
+repository-code: "https://github.com/shlomo-hareli/uws-film-reduced-model"
+
+license: "proprietary"
+
+abstract: >
+  Reduced-order model for urea–water solution film decomposition in SCR systems.
+  The software implements a progress-variable-based surrogate model using
+  trilinear interpolation of precomputed simulation data.
+
+keywords:
+  - SCR
+  - urea-water solution
+  - reduced-order modeling
+  - film decomposition
+  - CFD surrogate model
+
+preferred-citation:
+  type: article
+  title: "Reduced Model for Urea–Water Solution Film Decomposition in SCR Systems"
+  authors:
+    - Hareli, Shlomo
+    - Bykov, Viatcheslav
+    - Maas, Ulrich
+  year: 2026
+  note: "Manuscript in preparation"
