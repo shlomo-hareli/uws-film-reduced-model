@@ -1,146 +1,204 @@
-UWS Film Reduced Model (Tabulated Framework)
+# Tabulated Reduced-Order Model for Urea–Water-Solution (UWS) Film Decomposition in SCR-Relevant Flows
 
-Tabulated Reduced-Order Model for Urea–Water-Solution (UWS) Film Decomposition in SCR-Relevant Flows
+## Author Information
 
-Manuscript status: Submitted to Chemical Engineering Journal
-
-Author: Shlomo Hareli
-Karlsruhe Institute of Technology (KIT)
+**Shlomo Hareli**  
+Karlsruhe Institute of Technology (KIT)  
 Institute of Technical Thermodynamics
 
-Project Overview
+**Manuscript Status:** Submitted to *Chemical Engineering Journal*
 
-This repository provides a tabulated reduced-order model for the simulation of UWS film heating, evaporation, and chemical decomposition in Selective Catalytic Reduction (SCR) systems.
+---
 
-The model replaces expensive detailed multiphase reactive simulations with a deterministic surrogate model based on a progress-variable representation and precomputed high-fidelity simulation data.
+## Abstract
 
-It is designed for integration into Euler–Euler and Euler–Lagrange CFD frameworks.
+This repository presents a tabulated reduced-order model (ROM) for the deterministic simulation of coupled urea–water-solution (UWS) film heating, evaporation, and chemical decomposition in selective catalytic reduction (SCR) systems. The model replaces computationally expensive multiphase reactive flow simulations with a surrogate model formulated within a progress-variable framework and parametrized using precomputed high-fidelity simulation data. The ROM is designed for integration into both Euler–Euler and Euler–Lagrange computational fluid dynamics (CFD) frameworks, enabling efficient large-scale system-level analyses.
 
-Scientific Objective
+---
 
-The objective is to efficiently reproduce the following coupled processes:
+## 1. Scientific Objectives
 
-Film heating and thermal evolution
-Phase change and evaporation
-Urea decomposition pathways
-Intermediate species formation
-Heat and mass transfer coupling
+This work addresses the computational challenge of simulating coupled thermochemical processes in SCR catalytic systems by developing a deterministic surrogate model capable of capturing:
 
-while significantly reducing computational cost compared to full detailed simulations.
+- Film thermal evolution and heat transfer
+- Phase change kinetics and evaporation dynamics
+- Urea decomposition reaction pathways
+- Intermediate species formation and transport
+- Coupled heat and mass transfer phenomena
 
-Model Formulation
+The primary objective is to achieve significant computational cost reduction relative to full detailed chemistry simulations while maintaining thermochemical fidelity within the intended parameter space.
 
-The thermochemical state is represented as:
+---
 
-Psi = Psi(phi, Tf, Tg, r)
+## 2. Mathematical Formulation
+
+### 2.1 State Space Representation
+
+The thermochemical state is parametrized as a function of four independent variables:
+
+$$\Psi = \Psi(\phi, T_f, T_g, r)$$
 
 where:
+- $\phi$ = progress variable (0 to 1)
+- $T_f$ = film temperature [K]
+- $T_g$ = gas phase temperature [K]
+- $r$ = film thickness [m]
 
-phi = progress variable
-Tf = film temperature
-Tg = gas temperature
-r = film thickness
+### 2.2 Governing Evolution Equation
 
-The system evolution is reduced to:
+The system dynamics reduce to a single ordinary differential equation in the progress variable:
 
-dphi/dt = phi_dot(phi, Tf, Tg, r)
+$$\frac{d\phi}{dt} = \dot{\phi}(\phi, T_f, T_g, r)$$
 
-Time integration:
+**Time integration (explicit scheme):**
 
-phi(t + dt) = phi(t) + phi_dot * dt
+$$\phi(t + \Delta t) = \phi(t) + \dot{\phi} \cdot \Delta t$$
 
-All remaining thermochemical variables are reconstructed from phi using tabulated data.
+All remaining thermochemical variables are reconstructed from the tabulated mapping $\Psi(\phi, T_f, T_g, r)$ without requiring on-the-fly chemistry integration.
 
-State Vector (24 Variables)
+---
 
-0 phi progress variable
-1 dphi_dt source term
-2 d2eq equivalent diameter
-3 md mass
-4 temp temperature
-5 rho density
-6 w_h2o water mass fraction
-7 w_ur_s solid urea
-8 w_ur_l liquid urea
-9 w_hnco_l isocyanic acid
-10 w_biu_l biuret liquid
-11 w_biu_s biuret solid
-12 w_triu triuret
-13 w_cya_s cyanuric acid
-14 w_amd_s ammelide
-15 e_h2o evaporation rate (H2O)
-16 e_nh3 evaporation rate (NH3)
-17 e_cya evaporation rate (CYA)
-18 e_amd evaporation rate (AMD)
-19 e_ur evaporation rate (urea)
-20 e_hnco evaporation rate (HNCO)
-21 qdot heat flux
-22 t time
-23 mdot mass loss rate
+## 3. State Vector Definition
 
-Parameter Space
+The complete thermochemical state comprises 24 variables:
 
-Film temperature Tf: 400 – 650 K
-Gas temperature Tg: 450 – 700 K
-Film thickness r: 5e-5 – 1e-4 m
+| Index | Variable | Description | Units |
+|-------|----------|-------------|-------|
+| 0 | $\phi$ | Progress variable | [−] |
+| 1 | $\dot{\phi}$ | Progress variable source term | [s⁻¹] |
+| 2 | $d_{eq}$ | Equivalent diameter | [m] |
+| 3 | $m_d$ | Droplet/film mass | [kg] |
+| 4 | $T$ | Temperature | [K] |
+| 5 | $\rho$ | Density | [kg/m³] |
+| 6 | $w_{H_2O}$ | Water mass fraction | [−] |
+| 7 | $w_{Ur,s}$ | Solid urea mass fraction | [−] |
+| 8 | $w_{Ur,l}$ | Liquid urea mass fraction | [−] |
+| 9 | $w_{HNCO,l}$ | Isocyanic acid (liquid) mass fraction | [−] |
+| 10 | $w_{Biu,l}$ | Biuret (liquid) mass fraction | [−] |
+| 11 | $w_{Biu,s}$ | Biuret (solid) mass fraction | [−] |
+| 12 | $w_{Triu}$ | Triuret mass fraction | [−] |
+| 13 | $w_{Cya,s}$ | Cyanuric acid (solid) mass fraction | [−] |
+| 14 | $w_{Amd,s}$ | Ammelide (solid) mass fraction | [−] |
+| 15 | $\dot{e}_{H_2O}$ | Evaporation rate (H₂O) | [kg/s] |
+| 16 | $\dot{e}_{NH_3}$ | Evaporation rate (NH₃) | [kg/s] |
+| 17 | $\dot{e}_{Cya}$ | Evaporation rate (CYA) | [kg/s] |
+| 18 | $\dot{e}_{Amd}$ | Evaporation rate (AMD) | [kg/s] |
+| 19 | $\dot{e}_{Ur}$ | Evaporation rate (urea) | [kg/s] |
+| 20 | $\dot{e}_{HNCO}$ | Evaporation rate (HNCO) | [kg/s] |
+| 21 | $\dot{Q}$ | Heat flux | [W] |
+| 22 | $t$ | Time | [s] |
+| 23 | $\dot{m}$ | Mass loss rate | [kg/s] |
 
-Numerical Method
+---
 
-Trilinear interpolation in (Tf, Tg, r) space using eight neighboring tabulated states
-Reduction to a single progress variable phi
-Explicit time integration using interpolated source term
+## 4. Parameter Space and Validity Domain
 
-Model Features
+The ROM is tabulated over the following parameter ranges, representative of SCR-relevant thermal conditions:
 
-Fully tabulated reduced-order multiphase chemistry model
-Captures evaporation, decomposition, and residue formation
-Compatible with CFD spray and film solvers
-Deterministic surrogate without on-the-fly chemistry integration
-Efficient for large-scale simulations
+| Parameter | Range |
+|-----------|-------|
+| Film temperature, $T_f$ | 400 – 650 K |
+| Gas temperature, $T_g$ | 450 – 700 K |
+| Film thickness, $r$ | $5 \times 10^{-5}$ – $1 \times 10^{-4}$ m |
 
-Assumptions and Limitations
+Extrapolation beyond these bounds is not recommended.
 
-One-dimensional homogeneous film assumption
-No spatial gradients inside the film
-Valid only within tabulated parameter range
-No droplet–film or film–film interaction
-Interpolation-based closure assumption
+---
 
-Computational Efficiency
+## 5. Numerical Implementation
 
-The model replaces stiff reactive transport equations with:
+### 5.1 Interpolation Scheme
 
-Table lookup and interpolation
-One ODE in phi
+State reconstruction employs **trilinear interpolation** in the $(T_f, T_g, r)$ parameter space:
 
-Resulting in significant computational speed-up compared to detailed chemistry solvers.
+$$\Psi(\phi, T_f, T_g, r) = \sum_{i,j,k \in \{0,1\}} w_{ijk} \Psi_{ijk}(\phi)$$
 
-Funding
+where $w_{ijk}$ are trilinear basis functions and $\Psi_{ijk}$ denotes the precomputed table values at eight neighboring grid points.
 
-German Research Foundation (DFG)
-SFB TRR 150 (TP-B07), Project No. 237267381
+### 5.2 Time Integration
 
-Publication
+The progress variable evolution is integrated using an explicit time-stepping scheme with the interpolated source term $\dot{\phi}(t)$.
 
-Manuscript submitted to Chemical Engineering Journal
+### 5.3 Computational Efficiency
 
-Title: Tabulated Reduced-Order Model for Urea–Water-Solution (UWS) Film Decomposition in SCR-Relevant Flows
+The ROM replaces stiff reactive transport equations with:
+1. Tabulated data lookup
+2. Trilinear interpolation
+3. A single explicit ODE in $\phi$
 
-Reproducibility
+This approach achieves substantial computational acceleration relative to detailed chemistry solvers while maintaining deterministic, reproducible behavior.
 
-Load uws_film_table.pkl
-Select Tf, Tg, r
-Perform trilinear interpolation
-Integrate phi evolution in time
-Reconstruct full state vector
+---
 
-Repository Contents
+## 6. Model Assumptions and Limitations
 
-reduced_model_film.py
-uws_film_table.pkl
-all_process_phi.py
+The ROM operates under the following assumptions:
 
-Contact
+1. **Homogeneous film assumption:** One-dimensional composition and temperature profiles within the film
+2. **No spatial gradients:** Uniform properties throughout the film thickness
+3. **Valid parameter domain:** Predictive capability restricted to the tabulated range
+4. **Droplet–film decoupling:** No inter-droplet or droplet–film interactions
+5. **Interpolation closure:** All states outside explicit tabulation points are obtained through interpolation
 
-Karlsruhe Institute of Technology (KIT)
-Institute of Technical Thermodynamics
+---
+
+## 7. Model Capabilities
+
+The ROM captures the following physical phenomena:
+
+- Fully coupled multiphase chemistry with tabulated closure
+- Film evaporation kinetics and phase equilibrium
+- Urea decomposition mechanisms and thermal sensitivity
+- Residue formation (biuret, triuret, cyanuric acid, ammelide)
+- Direct integration with CFD spray and film solvers
+- Deterministic behavior without online chemistry integration
+
+---
+
+## 8. Computational Workflow
+
+The reproducibility workflow proceeds as follows:
+
+1. Load tabulated state data (`uws_film_table.pkl`)
+2. Specify initial conditions: $T_f$, $T_g$, $r$, $\phi_0$
+3. Perform trilinear interpolation to obtain initial state $\Psi_0$
+4. Integrate progress variable evolution: $\phi(t + \Delta t) = \phi(t) + \dot{\phi} \Delta t$
+5. Reconstruct full state vector from updated $\phi$ via tabulated mapping
+
+---
+
+## 9. Repository Contents
+
+- **`reduced_model_film.py`** – Core ROM implementation and interpolation routines
+- **`uws_film_table.pkl`** – Precomputed tabulated state data
+- **`all_process_phi.py`** – Utility functions for data generation and analysis
+
+---
+
+## 10. Funding and Support
+
+This work was supported by the **German Research Foundation (Deutsche Forschungsgemeinschaft, DFG)** under the **Collaborative Research Center SFB TRR 150** (Transregio 150), Task Project B07, Grant No. 237267381.
+
+---
+
+## 11. Publication
+
+**Manuscript Title:**  
+Tabulated Reduced-Order Model for Urea–Water-Solution (UWS) Film Decomposition in SCR-Relevant Flows
+
+**Status:** Submitted to *Chemical Engineering Journal*
+
+---
+
+## 12. Contact
+
+**Author:** Shlomo Hareli  
+**Institution:** Karlsruhe Institute of Technology (KIT)  
+**Department:** Institute of Technical Thermodynamics  
+
+---
+
+## References and Attribution
+
+For inquiries regarding model validation, application guidance, or collaboration, please contact the author at the above institution.
+
