@@ -12,7 +12,7 @@ Institute of Technical Thermodynamics
 
 ## Abstract
 
-This repository presents a tabulated reduced-order model (ROM) for the deterministic simulation of coupled urea–water-solution (UWS) film heating, evaporation, and chemical decomposition in selective catalytic reduction (SCR) systems. The model replaces computationally expensive multiphase reactive flow simulations with a surrogate model formulated within a progress-variable framework and parametrized using precomputed high-fidelity simulation data. The ROM is designed for integration into both Euler–Euler and Euler–Lagrange computational fluid dynamics (CFD) frameworks, enabling efficient large-scale system-level analyses.
+This repository presents a tabulated reduced-order model (ROM) for the deterministic simulation of coupled urea–water-solution (UWS) film heating, evaporation, and chemical decomposition in sele[...]
 
 ---
 
@@ -26,7 +26,7 @@ This work addresses the computational challenge of simulating coupled thermochem
 - Intermediate species formation and transport
 - Coupled heat and mass transfer phenomena
 
-The primary objective is to achieve significant computational cost reduction relative to full detailed chemistry simulations while maintaining thermochemical fidelity within the intended parameter space.
+The primary objective is to achieve significant computational cost reduction relative to full detailed chemistry simulations while maintaining thermochemical fidelity within the intended parameter[...]
 
 ---
 
@@ -105,6 +105,32 @@ Extrapolation beyond these bounds is not recommended.
 
 ---
 
+## 4.1 Table Resolution and Parameter Space (Film Model)
+
+The film reduced-order model is constructed from a precomputed database of detailed simulations stored in tabulated form. The accuracy of the interpolation depends on the resolution of the parameter grids.
+
+**Film temperature (wall temperature, adiabatic assumption):**
+$$T_{\text{film}} = [400, 450, 500, 550, 600, 650] \text{ K}$$
+
+**Ambient gas temperature:**
+$$T_{\text{ambient}} = [450, 500, 550, 600, 650, 700] \text{ K}$$
+
+**Film thickness:**
+$$R_0 = [5.0 \times 10^{-5}, 1.0 \times 10^{-4}] \text{ m}$$
+
+**Initial conditions:**
+- Initial composition: 100% liquid urea
+
+### Accuracy
+
+The reduced model reproduces the detailed simulations with a typical deviation of **≤ 5%** for key observables including ammonia formation and solid residue evolution. Small deviations may appear in the timing of peak formation due to interpolation in coarse parameter directions (especially film thickness).
+
+Accuracy can be improved by:
+- Refining the temperature/thickness grids
+- Increasing the resolution of the progress-variable discretization
+
+---
+
 ## 5. Numerical Implementation
 
 ### 5.1 Interpolation Scheme
@@ -177,7 +203,7 @@ The reproducibility workflow proceeds as follows:
 
 ## 10. Funding and Support
 
-This work was supported by the **German Research Foundation (Deutsche Forschungsgemeinschaft, DFG)** under the **Collaborative Research Center SFB TRR 150** (Transregio 150), Task Project B07, Grant No. 237267381.
+This work was supported by the **German Research Foundation (Deutsche Forschungsgemeinschaft, DFG)** under the **Collaborative Research Center SFB TRR 150** (Transregio 150), Task Project B07, Gr[...]
 
 ---
 
