@@ -107,27 +107,45 @@ Extrapolation beyond these bounds is not recommended.
 
 ## 4.1 Table Resolution and Parameter Space (Film Model)
 
-The film reduced-order model is constructed from a precomputed database of detailed simulations stored in tabulated form. The accuracy of the interpolation depends on the resolution of the parameter grids.
+The film reduced-order model is constructed from a precomputed database of detailed simulations stored in tabulated form. The accuracy of the interpolation depends critically on the resolution of the parameter grids.
+
+### Grid Resolution and Table Structure
 
 **Film temperature (wall temperature, adiabatic assumption):**
-$$T_{\text{film}} = [400, 450, 500, 550, 600, 650] \text{ K}$$
+$$T_{\text{film}} = [400, 450, 500, 550, 600, 650] \text{ K} \quad (6 \text{ grid points})$$
 
 **Ambient gas temperature:**
-$$T_{\text{ambient}} = [450, 500, 550, 600, 650, 700] \text{ K}$$
+$$T_{\text{ambient}} = [450, 500, 550, 600, 650, 700] \text{ K} \quad (6 \text{ grid points})$$
 
 **Film thickness:**
-$$R_0 = [5.0 \times 10^{-5}, 1.0 \times 10^{-4}] \text{ m}$$
+$$R_0 = [5.0 \times 10^{-5}, 1.0 \times 10^{-4}] \text{ m} \quad (2 \text{ grid points})$$
+
+**Grid total size:** $6 \times 6 \times 2 = 72$ parameter space nodes
 
 **Initial conditions:**
 - Initial composition: 100% liquid urea
 
-### Accuracy
+### Accuracy and Grid Resolution Effects
 
-The reduced model reproduces the detailed simulations with a typical deviation of **≤ 5%** for key observables including ammonia formation and solid residue evolution. Small deviations may appear in the timing of peak formation due to interpolation in coarse parameter directions (especially film thickness).
+The reduced model reproduces the detailed simulations with a typical deviation of **≤ 5%** for key observables including ammonia formation and solid residue evolution. However, the accuracy is directly affected by the grid resolution in each parameter direction:
 
-Accuracy can be improved by:
-- Refining the temperature/thickness grids
-- Increasing the resolution of the progress-variable discretization
+**Temperature grids (6 points each):**
+- Film temperature spacing: 50 K intervals
+- Ambient temperature spacing: 50 K intervals
+- Effect: Fine grid resolution in temperature directions minimizes interpolation errors for thermally-driven processes
+
+**Film thickness grid (2 points):**
+- Thickness spacing: $5.0 \times 10^{-5}$ m (coarse)
+- Effect: **Coarsest direction** – small deviations in timing of peak formation and residue evolution primarily originate from interpolation in this parameter direction
+- Sensitivity: Thickness strongly affects evaporation and decomposition kinetics; interpolation between the two nodes can introduce time-shift artifacts
+
+### Recommendations for Improved Accuracy
+
+Accuracy can be enhanced through:
+
+1. **Refining the film thickness grid:** Increase from 2 to 4-6 points ($R_0 = [5.0, 7.5, 10.0, 12.5 \times 10^{-5}]$ m) to reduce interpolation error in the dominant parameter controlling kinetics
+2. **Increasing progress-variable discretization:** Higher resolution in $\phi$ space within each parameter node improves state reconstruction fidelity
+3. **Targeted grid refinement:** Focus refinement in critical temperature ranges (450–550 K) where reaction pathways transition significantly
 
 ---
 
@@ -165,6 +183,7 @@ The ROM operates under the following assumptions:
 3. **Valid parameter domain:** Predictive capability restricted to the tabulated range
 4. **Droplet–film decoupling:** No inter-droplet or droplet–film interactions
 5. **Interpolation closure:** All states outside explicit tabulation points are obtained through interpolation
+6. **Grid resolution limitations:** Coarse discretization in film thickness direction can produce timing shifts in peak formation events
 
 ---
 
