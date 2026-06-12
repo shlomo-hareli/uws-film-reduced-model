@@ -12,7 +12,7 @@ Institute of Technical Thermodynamics
 
 ## Abstract
 
-This repository presents a tabulated reduced-order model (ROM) for the deterministic simulation of coupled urea–water-solution (UWS) film heating, evaporation, and chemical decomposition in sele[...]
+This repository presents a tabulated reduced-order model (ROM) for the deterministic simulation of coupled urea–water-solution (UWS) film heating, evaporation, and chemical decomposition in select SCR-relevant flows.
 
 ---
 
@@ -26,7 +26,7 @@ This work addresses the computational challenge of simulating coupled thermochem
 - Intermediate species formation and transport
 - Coupled heat and mass transfer phenomena
 
-The primary objective is to achieve significant computational cost reduction relative to full detailed chemistry simulations while maintaining thermochemical fidelity within the intended parameter[...]
+The primary objective is to achieve significant computational cost reduction relative to full detailed chemistry simulations while maintaining thermochemical fidelity within the intended parameter space.
 
 ---
 
@@ -107,45 +107,61 @@ Extrapolation beyond these bounds is not recommended.
 
 ## 4.1 Table Resolution and Parameter Space (Film Model)
 
-The film reduced-order model is constructed from a precomputed database of detailed simulations stored in tabulated form. The accuracy of the interpolation depends critically on the resolution of the parameter grids.
+The film reduced-order model is constructed from a precomputed database of detailed simulations stored in tabulated form. **The accuracy of interpolation depends critically on the resolution of the parameter grids.** This section details the grid structure and its impact on model accuracy.
 
 ### Grid Resolution and Table Structure
 
 **Film temperature (wall temperature, adiabatic assumption):**
-$$T_{\text{film}} = [400, 450, 500, 550, 600, 650] \text{ K} \quad (6 \text{ grid points})$$
+$$T_{\text{film}} = [400, 450, 500, 550, 600, 650] \text{ K}$$
+- **Grid points:** 6
+- **Spacing:** 50 K intervals
+- **Accuracy impact:** Fine resolution minimizes interpolation errors for thermally-driven processes
 
 **Ambient gas temperature:**
-$$T_{\text{ambient}} = [450, 500, 550, 600, 650, 700] \text{ K} \quad (6 \text{ grid points})$$
+$$T_{\text{ambient}} = [450, 500, 550, 600, 650, 700] \text{ K}$$
+- **Grid points:** 6
+- **Spacing:** 50 K intervals
+- **Accuracy impact:** Fine resolution minimizes interpolation errors for thermally-driven processes
 
 **Film thickness:**
-$$R_0 = [5.0 \times 10^{-5}, 1.0 \times 10^{-4}] \text{ m} \quad (2 \text{ grid points})$$
+$$R_0 = [5.0 \times 10^{-5}, 1.0 \times 10^{-4}] \text{ m}$$
+- **Grid points:** 2
+- **Spacing:** $5.0 \times 10^{-5}$ m (coarse)
+- **Accuracy impact:** **Coarsest direction** – primary source of timing shifts in peak formation and residue evolution
 
-**Grid total size:** $6 \times 6 \times 2 = 72$ parameter space nodes
+**Overall grid structure:**
+$$\text{Total grid size} = 6 \times 6 \times 2 = 72 \text{ parameter space nodes}$$
 
 **Initial conditions:**
 - Initial composition: 100% liquid urea
 
-### Accuracy and Grid Resolution Effects
+### How Grid Resolution Affects Accuracy
 
-The reduced model reproduces the detailed simulations with a typical deviation of **≤ 5%** for key observables including ammonia formation and solid residue evolution. However, the accuracy is directly affected by the grid resolution in each parameter direction:
+**Model Accuracy:**
+The reduced model reproduces detailed simulations with a typical deviation of **≤ 5%** for key observables including ammonia formation and solid residue evolution.
 
 **Temperature grids (6 points each):**
-- Film temperature spacing: 50 K intervals
-- Ambient temperature spacing: 50 K intervals
 - Effect: Fine grid resolution in temperature directions minimizes interpolation errors for thermally-driven processes
+- Contribution to accuracy: High fidelity in temperature-sensitive kinetics
 
-**Film thickness grid (2 points):**
-- Thickness spacing: $5.0 \times 10^{-5}$ m (coarse)
+**Film thickness grid (2 points) – Limiting factor:**
 - Effect: **Coarsest direction** – small deviations in timing of peak formation and residue evolution primarily originate from interpolation in this parameter direction
-- Sensitivity: Thickness strongly affects evaporation and decomposition kinetics; interpolation between the two nodes can introduce time-shift artifacts
+- Sensitivity: Thickness strongly affects evaporation and decomposition kinetics; interpolation between the two nodes can introduce time-shift artifacts (~5–10% timing variations)
+- Critical role: Film thickness is the dominant parameter controlling kinetics; coarse resolution here is the primary accuracy bottleneck
 
 ### Recommendations for Improved Accuracy
 
 Accuracy can be enhanced through:
 
-1. **Refining the film thickness grid:** Increase from 2 to 4-6 points ($R_0 = [5.0, 7.5, 10.0, 12.5 \times 10^{-5}]$ m) to reduce interpolation error in the dominant parameter controlling kinetics
-2. **Increasing progress-variable discretization:** Higher resolution in $\phi$ space within each parameter node improves state reconstruction fidelity
-3. **Targeted grid refinement:** Focus refinement in critical temperature ranges (450–550 K) where reaction pathways transition significantly
+1. **Refining the film thickness grid (highest priority):** Increase from 2 to 4–6 points
+   - Example: $R_0 = [5.0, 6.25, 7.5, 8.75, 10.0 \times 10^{-5}]$ m
+   - Expected improvement: Reduce timing shifts to ≤ 2–3% and improve peak formation accuracy
+
+2. **Increasing progress-variable discretization:** Higher resolution in $\phi$ space within each parameter node
+   - Expected improvement: Enhanced state reconstruction fidelity throughout decomposition pathway
+
+3. **Targeted grid refinement in critical temperature range:** Focus refinement in 450–550 K where reaction pathways transition significantly
+   - Expected improvement: Better accuracy in intermediate species formation
 
 ---
 
@@ -222,7 +238,7 @@ The reproducibility workflow proceeds as follows:
 
 ## 10. Funding and Support
 
-This work was supported by the **German Research Foundation (Deutsche Forschungsgemeinschaft, DFG)** under the **Collaborative Research Center SFB TRR 150** (Transregio 150), Task Project B07, Gr[...]
+This work was supported by the **German Research Foundation (Deutsche Forschungsgemeinschaft, DFG)** under the **Collaborative Research Center SFB TRR 150** (Transregio 150), Task Project B07.
 
 ---
 
@@ -246,4 +262,3 @@ Tabulated Reduced-Order Model for Urea–Water-Solution (UWS) Film Decomposition
 ## References and Attribution
 
 For inquiries regarding model validation, application guidance, or collaboration, please contact the author at the above institution.
-
