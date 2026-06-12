@@ -1,49 +1,45 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it."
+title: "Reduced Model for Urea–Water Solution Film Decomposition in SCR Systems"
+message: "If you use this software or data, please cite the associated paper and repository."
 
-title: "Reduced Model for Urea–Water Solution Film Decomposition in SCR Systems (Software)"
+type: software
 
 authors:
   - family-names: Hareli
     given-names: Shlomo
-    affiliation: Karlsruhe Institute of Technology (KIT)
+    affiliation: "Karlsruhe Institute of Technology (KIT)"
     email: shlomo.hareli@kit.edu
-   
+    orcid: https://orcid.org/0000-0000-0000-0000
+
   - family-names: Bykov
     given-names: Viatcheslav
-    affiliation: Karlsruhe Institute of Technology (KIT)
-    
+    affiliation: "Karlsruhe Institute of Technology (KIT)"
+    email: viatcheslav.bykov@kit.edu
 
   - family-names: Maas
     given-names: Ulrich
-    affiliation: Karlsruhe Institute of Technology (KIT)
-    
+    affiliation: "Karlsruhe Institute of Technology (KIT)"
+    email: ulrich.maas@kit.edu
 
-date-released: 2026-06-12
+repository-code: https://github.com/shlomo-hareli/uws-film-reduced-model
+
+license: MIT
+
 version: 1.0.0
-
-repository-code: "https://github.com/shlomo-hareli/uws-film-reduced-model"
-
-license: "proprietary"
-
-abstract: >
-  Reduced-order model for urea–water solution film decomposition in SCR systems.
-  The software implements a progress-variable-based surrogate model using
-  trilinear interpolation of precomputed simulation data.
 
 keywords:
   - SCR
-  - urea-water solution
-  - reduced-order modeling
-  - film decomposition
-  - CFD surrogate model
+  - urea decomposition
+  - wall film
+  - reduced order model
+  - CFD
+  - chemical kinetics
 
-preferred-citation:
-  type: article
-  title: "Reduced Model for Urea–Water Solution Film Decomposition in SCR Systems"
-  authors:
-    - Hareli, Shlomo
-    - Bykov, Viatcheslav
-    - Maas, Ulrich
-  year: 2026
-  note: "Manuscript in preparation"
+date-released: 2026-06-12
+
+abstract: >
+  This repository provides a reduced-order model for urea-water solution (UWS)
+  film decomposition in Selective Catalytic Reduction (SCR) systems. The model
+  is based on a trilinear tabulation over film temperature, gas temperature,
+  and film thickness, combined with a progress-variable formulation derived
+  from detailed one-dimensional transient simulations.
